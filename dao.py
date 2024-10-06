@@ -1,10 +1,10 @@
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, and_
 from sqlalchemy.orm import Session
 
 import models
 
 # Datasource
-engine = create_engine("sqlite://", echo=False)
+engine = create_engine("sqlite:///main.sqlite", echo=False)
 models.BaseModel.metadata.create_all(bind=engine)
 
 
@@ -13,7 +13,7 @@ class GameDao:
     def save_entry(self, entry: models.Game):
         global engine
         with Session(engine) as session:
-            session.add(entry)
+            session.merge(entry)
             session.commit()
 
     def delete_entry(self, entry: models.Game):
@@ -26,7 +26,7 @@ class GameDao:
         global engine
         retval = None
         with Session(engine) as session:
-            stmt = select(models.Game).where(models.Game.token == token)
+            stmt = select(models.Game).where(and_(models.Game.token == token, models.Game.status == "playing"))
             retval = session.scalars(stmt).first()
         return retval
 
@@ -34,7 +34,7 @@ class GameDao:
         global engine
         retval = None
         with Session(engine) as session:
-            stmt = select(models.Game).where(models.Game.device == device)
+            stmt = select(models.Game).where(and_(models.Game.device == device, models.Game.status == "playing"))
             retval = session.scalars(stmt).first()
         return retval
 
@@ -46,6 +46,7 @@ class StatDao:
         with Session(engine) as session:
             session.add(entry)
             session.commit()
+            session.refresh(entry)
 
     def get_entry(self, device: str) -> models.Stat | None:
         global engine

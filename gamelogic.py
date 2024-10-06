@@ -42,7 +42,7 @@ def hit(game: models.Game) -> models.ResponseMsg:
 
 
 def stay(game: models.Game) -> models.ResponseMsg:
-    while score(game.dealerCards < 17):
+    while score(game.dealerCards) < 17:
         game.dealerCards.append(game.deck.pop())
 
     print(f'STAY: {game.token}')
@@ -84,3 +84,4 @@ def card_value(card: str) -> int:
         return int(numeric)
     elif any(char in card for char in ['J','Q','K']):
         return 10
+    return 0

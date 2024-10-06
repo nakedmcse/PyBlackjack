@@ -1,50 +1,76 @@
+import json
 import time
 import uuid
+
+from flask import Flask, request, Response
 
 import gamelogic
 import models
 import service
+import utils
 
 game_service = service.ServiceGame()
 stat_service = service.ServiceStat()
 
-# Add some games
-token_1 = str(uuid.uuid4())
-new_game_1 = models.Game(token=token_1, device="device_1", status="playing", startedOn=int(time.time()),
-                         deck=[], dealerCards=[], playerCards=[])
-gamelogic.create_deck(new_game_1)
-gamelogic.deal(new_game_1)
-game_service.save_game(new_game_1)
+blackjack_api = Flask(__name__)
 
-token_2 = str(uuid.uuid4())
-new_game_2 = models.Game(token=token_2, device="device_2", status="playing", startedOn=int(time.time()),
-                         deck=[], dealerCards=[], playerCards=[])
-gamelogic.create_deck(new_game_2)
-gamelogic.deal(new_game_2)
-game_service.save_game(new_game_2)
 
-token_3 = str(uuid.uuid4())
-new_game_3 = models.Game(token=token_3, device="device_3", status="playing", startedOn=int(time.time()),
-                         deck=[], dealerCards=[], playerCards=[])
-gamelogic.create_deck(new_game_3)
-gamelogic.deal(new_game_3)
-game_service.save_game(new_game_3)
+# Deal endpoint
+@blackjack_api.route('/deal', methods=['GET'])
+def deal():
+    device_id = utils.device_hash(request)
+    ret_game = game_service.get_device(device_id)
 
-# Add some stats
-stat_1 = models.Stat(device="device_1", wins=1, loses=1, draws=1)
-stat_service.save_stat(stat_1)
-stat_service.update_stat("device_2","win")
+    if ret_game is None:
+        ret_game = models.Game(token=str(uuid.uuid4()), device=device_id, status="playing", startedOn=int(time.time()),
+                               deck=[], dealerCards=[], playerCards=[])
+        gamelogic.create_deck(ret_game)
+        gamelogic.deal(ret_game)
+        game_service.save_game(ret_game)
+        print(f'Created new game for {device_id}')
 
-# Get game by token
-game_by_token = game_service.get_token(token_3)
-print(game_by_token)
+    print(f'DEAL: {ret_game.token}')
+    resp = models.ResponseMsg(token=ret_game.token, device=ret_game.device, cards=ret_game.playerCards, dealerCards=[],
+                              handValue=gamelogic.score(ret_game.playerCards), dealerValue=0, status=ret_game.status)
+    return Response(json.dumps(resp.__dict__, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
-# Get game by device
-game_by_device = game_service.get_device("device_2")
-print(game_by_device)
+# Hit endpoint
+@blackjack_api.route('/hit', methods=['GET'])
+def hit():
+    device_id = utils.device_hash(request)
+    token = request.args.get('token', '')
+    ret_game = game_service.get_active_game(token=token, device=device_id)
+    if ret_game is None:
+        return Response(json.dumps(models.ErrorMsg(status=400, message="Missing Game").__dict__),
+                        content_type="application/json; charset=utf-8", status=400)
+    resp = gamelogic.hit(ret_game)
+    return Response(json.dumps(resp.__dict__, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
-# Get stats
-stats_dev1 = stat_service.get_stat("device_1")
-print(stats_dev1)
-stats_dev2 = stat_service.get_stat("device_2")
-print(stats_dev2)
+
+# Stay endpoint
+@blackjack_api.route('/stay', methods=['GET'])
+def stay():
+    device_id = utils.device_hash(request)
+    token = request.args.get('token', '')
+    ret_game = game_service.get_active_game(token=token, device=device_id)
+    if ret_game is None:
+        return Response(json.dumps(models.ErrorMsg(status=400, message="Missing Game").__dict__),
+                        content_type="application/json; charset=utf-8", status=400)
+    resp = gamelogic.stay(ret_game)
+    return Response(json.dumps(resp.__dict__, ensure_ascii=False), content_type="application/json; charset=utf-8")
+
+
+# Stats endpoint
+@blackjack_api.route('/stats', methods=['GET'])
+def stats():
+    device_id = utils.device_hash(request)
+    user_stats = stat_service.get_stat(device_id)
+    if user_stats is None:
+        return Response(json.dumps(models.ErrorMsg(status=400, message="Missing Device").__dict__),
+                        content_type="application/json; charset=utf-8", status=400)
+    resp = models.StatsMsg(wins=user_stats.wins, loses=user_stats.loses, draws=user_stats.draws)
+    return Response(json.dumps(resp.__dict__, ensure_ascii=False), content_type="application/json; charset=utf-8")
+
+
+if __name__ == '__main__':
+    blackjack_api.run(port=5000, debug=False)
