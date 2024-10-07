@@ -34,6 +34,7 @@ def deal():
                               handValue=gamelogic.score(ret_game.playerCards), dealerValue=0, status=ret_game.status)
     return Response(json.dumps(resp.__dict__, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
+
 # Hit endpoint
 @blackjack_api.route('/hit', methods=['GET'])
 def hit():
@@ -70,6 +71,18 @@ def stats():
                         content_type="application/json; charset=utf-8", status=400)
     resp = models.StatsMsg(wins=user_stats.wins, loses=user_stats.loses, draws=user_stats.draws)
     return Response(json.dumps(resp.__dict__, ensure_ascii=False), content_type="application/json; charset=utf-8")
+
+
+# History endpoint
+@blackjack_api.route('/history', methods=['GET'])
+def history():
+    device_id = utils.device_hash(request)
+    start = request.args.get('start', '')
+    games = game_service.get_history(device_id, start)
+    resp = [models.ResponseMsg(x.token, x.device, x.playerCards, x.dealerCards,
+                               gamelogic.score(x.playerCards), gamelogic.score(x.dealerCards), x.status).__dict__
+            for x in games]
+    return Response(json.dumps(resp, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 
 if __name__ == '__main__':

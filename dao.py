@@ -38,6 +38,14 @@ class GameDao:
             retval = session.scalars(stmt).first()
         return retval
 
+    def get_history(self, device: str, epoch: int) -> list[models.Game]:
+        global engine
+        retval = None
+        with Session(engine) as session:
+            stmt = select(models.Game).where(and_(models.Game.device == device, models.Game.startedOn >= epoch, models.Game.status != "playing"))
+            retval = list(session.scalars(stmt))
+        return retval
+
 
 # Stat Dao
 class StatDao:

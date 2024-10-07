@@ -17,6 +17,9 @@ class GameRepo:
     def get_entry_by_device(self, device: str) -> models.Game | None:
         return self.__dao.get_entry_by_device(device)
 
+    def get_history(self, device: str, epoch: int) -> list[models.Game]:
+        return self.__dao.get_history(device, epoch)
+
 
 class StatRepo:
     __dao = dao.StatDao()
