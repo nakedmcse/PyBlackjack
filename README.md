@@ -5,14 +5,27 @@
 This contains the Python version of the BlackJack game API.
 
 ## Installation
-This application depends upon Flask and SQLAlchemy.
+This application depends upon DotEnv, Flask and SQLAlchemy.
 
 ```shell
 pip install SQLAlchemy
 pip install flask
+pip install python-dotenv
 ```
 
 After that you can run blackjack.py
+
+## Environment
+The `.env` file must be created for this application to run.  Rename `.envExample` to `.env`.
+
+### Env File Settings
+Edit the `.env` file to set the following:
+
+| Setting | Description                                          |
+|---------|------------------------------------------------------|
+| PORT    | The port the service will listen on                  |
+| DEBUG   | `true` to run flask in debug mode, `false` otherwise |
+
 
 ## Usage
 

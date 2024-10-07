@@ -1,13 +1,17 @@
 import json
+import os
 import time
 import uuid
 
+from dotenv import load_dotenv
 from flask import Flask, request, Response
 
 import gamelogic
 import models
 import service
 import utils
+
+load_dotenv()
 
 game_service = service.ServiceGame()
 stat_service = service.ServiceStat()
@@ -86,4 +90,4 @@ def history():
 
 
 if __name__ == '__main__':
-    blackjack_api.run(port=5000, debug=False)
+    blackjack_api.run(port=os.getenv('PORT'), debug=(os.getenv('DEBUG') == 'true'))
