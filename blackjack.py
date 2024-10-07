@@ -4,12 +4,14 @@ import time
 import uuid
 
 from dotenv import load_dotenv
+from flasgger import Swagger, swag_from
 from flask import Flask, request, Response
 
 import gamelogic
 import models
 import service
 import utils
+from swagger.config import template
 
 load_dotenv()
 
@@ -17,10 +19,12 @@ game_service = service.ServiceGame()
 stat_service = service.ServiceStat()
 
 blackjack_api = Flask(__name__)
+swagger = Swagger(blackjack_api, template=template)
 
 
 # Deal endpoint
 @blackjack_api.route('/deal', methods=['GET'])
+@swag_from('swagger/deal.yml')
 def deal():
     device_id = utils.device_hash(request)
     ret_game = game_service.get_device(device_id)
@@ -41,6 +45,7 @@ def deal():
 
 # Hit endpoint
 @blackjack_api.route('/hit', methods=['GET'])
+@swag_from('swagger/hit.yml')
 def hit():
     device_id = utils.device_hash(request)
     token = request.args.get('token', '')
@@ -54,6 +59,7 @@ def hit():
 
 # Stay endpoint
 @blackjack_api.route('/stay', methods=['GET'])
+@swag_from('swagger/stay.yml')
 def stay():
     device_id = utils.device_hash(request)
     token = request.args.get('token', '')
@@ -67,6 +73,7 @@ def stay():
 
 # Stats endpoint
 @blackjack_api.route('/stats', methods=['GET'])
+@swag_from('swagger/stats.yml')
 def stats():
     device_id = utils.device_hash(request)
     user_stats = stat_service.get_stat(device_id)
@@ -79,6 +86,7 @@ def stats():
 
 # History endpoint
 @blackjack_api.route('/history', methods=['GET'])
+@swag_from('swagger/history.yml')
 def history():
     device_id = utils.device_hash(request)
     start = request.args.get('start', '')

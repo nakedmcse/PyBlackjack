@@ -1,0 +1,63 @@
+Get player history of games
+---
+parameters:
+  - name: start
+    in: query
+    description: Optional start date
+    type: string
+    required: false
+    example: 'yyyy-mm-dd'
+definitions:
+  ErrorMsg:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: HTTP Status Number
+      message:
+        type: string
+        description: Descriptive Error Message
+  ResponseMsg:
+    type: object
+    properties:
+      token:
+        type: string
+        description: Game token UUID
+      device:
+        type: string
+        description: Device Hash
+      cards:
+        type: array
+        items:
+          type: string
+          description: Players Cards
+      dealerCards:
+        type: array
+        items:
+          type: string
+          description: Dealers Cards
+      handValue:
+        type: integer
+        description: Players cards score
+      dealerValue:
+        type: integer
+        description: Dealers cards value
+      status:
+        type: string
+        enum: [ 'playing', 'Dealer Bust', 'Player Wins', 'Dealer Wins', 'Draw' ]
+        description: Game Status
+responses:
+  200:
+    description: Array of all complete games from players device
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/ResponseMsg'
+  400:
+    description: Unable to find player by device id
+    content:
+      application/json:
+        schema:
+          $ref: '#/definitions/ErrorMsg'

@@ -5,12 +5,13 @@
 This contains the Python version of the BlackJack game API.
 
 ## Installation
-This application depends upon DotEnv, Flask and SQLAlchemy.
+This application depends upon DotEnv, Flasgger, Flask and SQLAlchemy.
 
 ```shell
 pip install SQLAlchemy
 pip install flask
 pip install python-dotenv
+pip install flasgger
 ```
 
 After that you can run blackjack.py

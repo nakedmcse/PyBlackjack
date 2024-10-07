@@ -1,0 +1,38 @@
+Create a new game, or retrieve existing in progress game
+---
+definitions:
+  ResponseMsg:
+    type: object
+    properties:
+        token:
+          type: string
+          description: Game token UUID
+        device:
+          type: string
+          description: Device Hash
+        cards:
+          type: array
+          items:
+            type: string
+            description: Players Cards
+        dealerCards:
+          type: array
+          items:
+            type: string
+            description: Dealers Cards
+        handValue:
+          type: integer
+          description: Players cards score
+        dealerValue:
+          type: integer
+          description: Dealers cards value
+        status:
+          type: string
+          description: Game Status
+responses:
+  200:
+    description: Newly created game with first two cards
+    content:
+      application/json:
+        schema:
+          $ref: '#/definitions/ResponseMsg'

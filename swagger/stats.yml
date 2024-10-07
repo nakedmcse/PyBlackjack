@@ -1,0 +1,37 @@
+Get player stats of wins, loses and draws
+---
+definitions:
+  ErrorMsg:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: HTTP Status Number
+      message:
+        type: string
+        description: Descriptive Error Message
+  StatsMsg:
+    type: object
+    properties:
+      wins:
+        type: integer
+        description: Number of player wins
+      loses:
+        type: integer
+        description: Number of player loses
+      draws:
+        type: integer
+        description: Number of player draws
+responses:
+  200:
+    description: Player aggregate stats
+    content:
+      application/json:
+        schema:
+          $ref: '#/definitions/StatsMsg'
+  400:
+    description: Unable to find player by device id
+    content:
+      application/json:
+        schema:
+          $ref: '#/definitions/ErrorMsg'
