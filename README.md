@@ -16,12 +16,13 @@ After that you can run blackjack.py
 
 ## Usage
 
-This API contains 4 interactions.
+This API contains 5 interactions.
 
 1. [Deal](#deal)
 2. [Hit](#hit)
 3. [Stay](#stay)
 4. [Stats](#stats)
+5. [History](#history)
 
 > **NOTE:** Depending on your shell, you may need to remove the quotes around the URLS in the CURL commands
 
@@ -108,4 +109,21 @@ curl 'http://localhost:5000/stats'
   "loses":2,
   "draws":1
 }
+```
+
+### History<a id="history"></a>
+This endpoint optionally takes the start date as a parameter and will return the game history for the device making the call, after the start date if specified, as an array of responses.
+
+```shell
+curl 'http://localhost:5000/history?start=2024-10-03'
+
+curl 'http://localhost:5000/history'
+```
+
+```json
+[
+  {"token":"6c359eb8-16bb-406a-93ff-6fbdaf1e5519","device":"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["6♣","5♦","10♥"],"dealerCards":["7♠","5♥","Q♣"],"handValue":21,"dealerValue":22,"status":"Dealer Bust"},
+  {"token":"de3db63b-4363-4c33-80cc-3ff51f02ea81","device":"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["9♠","5♥","7♥"],"dealerCards":["Q♥","5♠","10♥"],"handValue":21,"dealerValue":25,"status":"Dealer Bust"},
+  {"token":"420b767b-9506-47cc-a1e8-ed11d513fd30","device":"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["4♣","10♣","9♦"],"dealerCards":["6♣","3♥"],"handValue":23,"dealerValue":9,"status":"Bust"}
+]
 ```
