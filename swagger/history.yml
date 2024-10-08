@@ -1,5 +1,6 @@
 Get player history of games
 ---
+tags: [Blackjack]
 parameters:
   - name: start
     in: query
@@ -49,15 +50,11 @@ definitions:
 responses:
   200:
     description: Array of all complete games from players device
-    content:
-      application/json:
-        schema:
-          type: array
-          items:
-            $ref: '#/definitions/ResponseMsg'
+    schema:
+      type: array
+      items:
+        $ref: '#/definitions/ResponseMsg'
   400:
     description: Unable to find player by device id
-    content:
-      application/json:
-        schema:
-          $ref: '#/definitions/ErrorMsg'
+    schema:
+      $ref: '#/definitions/ErrorMsg'

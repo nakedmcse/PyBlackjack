@@ -1,5 +1,6 @@
 Get player stats of wins, loses and draws
 ---
+tags: [Blackjack]
 definitions:
   ErrorMsg:
     type: object
@@ -25,13 +26,9 @@ definitions:
 responses:
   200:
     description: Player aggregate stats
-    content:
-      application/json:
-        schema:
-          $ref: '#/definitions/StatsMsg'
+    schema:
+      $ref: '#/definitions/StatsMsg'
   400:
     description: Unable to find player by device id
-    content:
-      application/json:
-        schema:
-          $ref: '#/definitions/ErrorMsg'
+    schema:
+      $ref: '#/definitions/ErrorMsg'

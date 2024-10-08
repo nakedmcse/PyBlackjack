@@ -1,5 +1,6 @@
 Create a new game, or retrieve existing in progress game
 ---
+tags: [Blackjack]
 definitions:
   ResponseMsg:
     type: object
@@ -32,7 +33,5 @@ definitions:
 responses:
   200:
     description: Newly created game with first two cards
-    content:
-      application/json:
-        schema:
-          $ref: '#/definitions/ResponseMsg'
+    schema:
+      $ref: '#/definitions/ResponseMsg'

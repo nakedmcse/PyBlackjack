@@ -1,5 +1,6 @@
 Stop drawing cards and allow dealer to draw cards
 ---
+tags: [Blackjack]
 parameters:
   - name: token
     in: query
@@ -48,13 +49,9 @@ definitions:
 responses:
   200:
     description: Game with both player and dealer hands, values and outcome status
-    content:
-      application/json:
-        schema:
-          $ref: '#/definitions/ResponseMsg'
+    schema:
+      $ref: '#/definitions/ResponseMsg'
   400:
     description: Unable to find active game
-    content:
-      application/json:
-        schema:
-          $ref: '#/definitions/ErrorMsg'
+    schema:
+      $ref: '#/definitions/ErrorMsg'

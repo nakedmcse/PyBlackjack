@@ -1,5 +1,6 @@
 Draw a card from the dealer
 ---
+tags: [Blackjack]
 parameters:
   - name: token
     in: query
@@ -48,13 +49,9 @@ definitions:
 responses:
   200:
     description: Game with a new card added to the players hand
-    content:
-      application/json:
-        schema:
-          $ref: '#/definitions/ResponseMsg'
+    schema:
+      $ref: '#/definitions/ResponseMsg'
   400:
     description: Unable to find active game
-    content:
-      application/json:
-        schema:
-          $ref: '#/definitions/ErrorMsg'
+    schema:
+      $ref: '#/definitions/ErrorMsg'
