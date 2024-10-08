@@ -6,6 +6,7 @@ import uuid
 from dotenv import load_dotenv
 from flasgger import Swagger, swag_from
 from flask import Flask, request, Response
+from waitress import serve
 
 import gamelogic
 import models
@@ -98,4 +99,7 @@ def history():
 
 
 if __name__ == '__main__':
-    blackjack_api.run(port=os.getenv('PORT'), debug=(os.getenv('DEBUG') == 'true'))
+    if os.getenv('ENV').upper() == 'DEV':
+        blackjack_api.run(port=os.getenv('PORT'), debug=(os.getenv('DEBUG') == 'true'))
+    else:
+        serve(blackjack_api, port=os.getenv('PORT'))
