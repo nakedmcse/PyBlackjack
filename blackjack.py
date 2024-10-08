@@ -78,6 +78,7 @@ def stay():
 def stats():
     device_id = utils.device_hash(request)
     user_stats = stat_service.get_stat(device_id)
+    print(f'STATS: {device_id}')
     if user_stats is None:
         return Response(json.dumps(models.ErrorMsg(status=400, message="Missing Device").__dict__),
                         content_type="application/json; charset=utf-8", status=400)
@@ -91,6 +92,7 @@ def stats():
 def history():
     device_id = utils.device_hash(request)
     start = request.args.get('start', '')
+    print(f'HISTORY: {device_id} {start}')
     games = game_service.get_history(device_id, start)
     resp = [models.ResponseMsg(x.token, x.device, x.playerCards, x.dealerCards,
                                gamelogic.score(x.playerCards), gamelogic.score(x.dealerCards), x.status).__dict__
