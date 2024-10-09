@@ -27,7 +27,7 @@ Edit the `.env` file to set the following:
 |---------|------------------------------------------------------|
 | PORT    | The port the service will listen on                  |
 | DEBUG   | `true` to run flask in debug mode, `false` otherwise |
-| ENV     | `dev` to run as flask, `prod` to ru in waitress      |
+| ENV     | `dev` to run as flask, `prod` to run in waitress     |
 
 ## Usage
 
