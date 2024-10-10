@@ -66,15 +66,10 @@ def stay(game: models.Game) -> models.ResponseMsg:
 
 def score(cards: list[str]) -> int:
     retval = 0
-    hasAce = False
     for card in cards:
         retval += card_value(card)
         if 'A' in card:
-            hasAce = True
-    if hasAce:
-        for card in cards:
-            if 'A' in card:
-                retval += 1 if retval + 11 > 21 else 11
+            retval += 1 if retval + 11 > 21 else 11
     return retval
 
 
