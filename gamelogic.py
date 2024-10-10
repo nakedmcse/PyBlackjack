@@ -66,17 +66,22 @@ def stay(game: models.Game) -> models.ResponseMsg:
 
 def score(cards: list[str]) -> int:
     retval = 0
+    aces = 0
     for card in cards:
         retval += card_value(card)
-        if 'A' in card:
-            retval += 1 if retval + 11 > 21 else 11
+        aces += 1 if 'A' in card else 0
+    while retval > 21 and aces > 0:
+        retval -= 10
+        aces -= 1
     return retval
 
 
 def card_value(card: str) -> int:
-    numeric = ''.join(re.findall(r'\d+',card))
+    numeric = ''.join(re.findall(r'\d+', card))
     if numeric:
         return int(numeric)
-    elif any(char in card for char in ['J','Q','K']):
+    elif any(char in card for char in ['J', 'Q', 'K']):
         return 10
+    elif 'A' in card:
+        return 11
     return 0
