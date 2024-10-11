@@ -24,7 +24,7 @@ swagger = Swagger(blackjack_api, template=template)
 
 
 # Deal endpoint
-@blackjack_api.route('/deal', methods=['GET'])
+@blackjack_api.route('/deal', methods=['POST'])
 @swag_from('swagger/deal.yml')
 def deal():
     device_id = utils.device_hash(request)
@@ -45,7 +45,7 @@ def deal():
 
 
 # Hit endpoint
-@blackjack_api.route('/hit', methods=['GET'])
+@blackjack_api.route('/hit', methods=['POST'])
 @swag_from('swagger/hit.yml')
 def hit():
     device_id = utils.device_hash(request)
@@ -59,7 +59,7 @@ def hit():
 
 
 # Stay endpoint
-@blackjack_api.route('/stay', methods=['GET'])
+@blackjack_api.route('/stay', methods=['POST'])
 @swag_from('swagger/stay.yml')
 def stay():
     device_id = utils.device_hash(request)
