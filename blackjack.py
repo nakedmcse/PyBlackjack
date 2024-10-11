@@ -20,7 +20,16 @@ game_service = service.ServiceGame()
 stat_service = service.ServiceStat()
 
 blackjack_api = Flask(__name__)
+blackjack_api.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 swagger = Swagger(blackjack_api, template=template)
+
+
+# Disable Cache
+@blackjack_api.after_request
+def no_cache(req):
+    req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    req.headers["Pragma"] = "no-cache"
+    return req
 
 
 # Deal endpoint
