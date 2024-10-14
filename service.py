@@ -25,6 +25,9 @@ class ServiceGame:
         epoch = utils.string_epoch(start)
         return self.__repo.get_history(device, epoch)
 
+    def delete_history(self, device: str, token: str | None) -> bool:
+        return self.__repo.delete_history(device, token)
+
 
 class ServiceStat:
     __repo = repo.StatRepo()

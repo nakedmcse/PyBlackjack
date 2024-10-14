@@ -20,6 +20,9 @@ class GameRepo:
     def get_history(self, device: str, epoch: int) -> list[models.Game]:
         return self.__dao.get_history(device, epoch)
 
+    def delete_history(self, device: str, token: str | None) -> bool:
+        return self.__dao.delete_history(device, token)
+
 
 class StatRepo:
     __dao = dao.StatDao()

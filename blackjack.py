@@ -109,6 +109,21 @@ def history():
     return Response(json.dumps(resp, ensure_ascii=False), content_type="application/json; charset=utf-8")
 
 
+# Delete endpoint
+@blackjack_api.route('/delete', defaults={'token': None}, methods=['DELETE'])
+@blackjack_api.route('/delete/<token>', methods=['DELETE'])
+@swag_from('swagger/delete.yml')
+def delete(token):
+    device_id = utils.device_hash(request)
+    sure = request.args.get('sure', '')
+    if sure != 'true':
+        return Response(json.dumps(models.ErrorMsg(status=400, message="Sure must be set to true").__dict__),
+                        content_type="application/json; charset=utf-8", status=400)
+    print(f'DELETE HISTORY: {device_id}')
+    resp = game_service.delete_history(device_id, token)
+    return Response(json.dumps(resp, ensure_ascii=False), content_type="application/json; charset=utf-8")
+
+
 if __name__ == '__main__':
     if os.getenv('ENV').upper() == 'DEV':
         blackjack_api.run(port=os.getenv('PORT'), debug=(os.getenv('DEBUG') == 'true'))

@@ -142,3 +142,19 @@ curl 'http://localhost:5000/history'
   {"token":"420b767b-9506-47cc-a1e8-ed11d513fd30","device":"d08d4747b78e17c5459e8744604b90b35e669426f9c9d8e5b161b8828711c1ba","cards":["4♣","10♣","9♦"],"dealerCards":["6♣","3♥"],"handValue":23,"dealerValue":9,"status":"Bust"}
 ]
 ```
+
+### Delete<a id="delete"></a>
+This endpoint takes a parameter `sure` which must be set to true and will delete the game history for the device making the call.
+It can also take an option path component with the game token.  If token is specified then just that game will be deleted.
+
+> **NOTE:** If sure is not set to true, the history will not be deleted
+
+```shell
+curl -X 'DELETE' 'http://localhost:5000/delete?sure=true'
+
+curl -X 'DELETE' 'http://localhost:5000/delete/420b767b-9506-47cc-a1e8-ed11d513fd30?sure=true'
+```
+
+```json
+true
+```

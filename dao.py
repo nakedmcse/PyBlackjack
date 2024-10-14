@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, select, and_
+from sqlalchemy import create_engine, select, delete, and_
 from sqlalchemy.orm import Session
 
 import models
@@ -45,6 +45,14 @@ class GameDao:
             stmt = select(models.Game).where(and_(models.Game.device == device, models.Game.startedOn >= epoch, models.Game.status != "playing"))
             retval = list(session.scalars(stmt))
         return retval
+
+    def delete_history(self, device: str, token: str | None) -> bool:
+        global engine
+        with Session(engine) as session:
+            stmt = delete(models.Game).where(and_(models.Game.device == device, models.Game.status != "playing")) if token is None else delete(models.Game).where(models.Game.token == token)
+            session.execute(stmt)
+            session.commit()
+        return True
 
 
 # Stat Dao
