@@ -38,6 +38,7 @@ This API contains 5 interactions.
 3. [Stay](#stay)
 4. [Stats](#stats)
 5. [History](#history)
+6. [Delete](#delete)
 
 > **NOTE:** Depending on your shell, you may need to remove the quotes around the URLS in the CURL commands
 
