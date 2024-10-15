@@ -119,7 +119,7 @@ def delete(token):
     if sure != 'true':
         return Response(json.dumps(models.ErrorMsg(status=400, message="Sure must be set to true").__dict__),
                         content_type="application/json; charset=utf-8", status=400)
-    print(f'DELETE HISTORY: {device_id}')
+    print(f'DELETE HISTORY: {device_id if token is None else token}')
     resp = game_service.delete_history(device_id, token)
     return Response(json.dumps(resp, ensure_ascii=False), content_type="application/json; charset=utf-8")
 

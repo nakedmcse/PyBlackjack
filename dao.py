@@ -49,7 +49,10 @@ class GameDao:
     def delete_history(self, device: str, token: str | None) -> bool:
         global engine
         with Session(engine) as session:
-            stmt = delete(models.Game).where(and_(models.Game.device == device, models.Game.status != "playing")) if token is None else delete(models.Game).where(models.Game.token == token)
+            if token is None:
+                stmt = delete(models.Game).where(and_(models.Game.device == device, models.Game.status != "playing"))
+            else:
+                stmt = delete(models.Game).where(and_(models.Game.token == token, models.Game.status != "playing"))
             session.execute(stmt)
             session.commit()
         return True
