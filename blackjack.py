@@ -47,7 +47,6 @@ def deal():
         game_service.save_game(ret_game)
         print(f'Created new game for {device_id}')
 
-    print(f'DEAL: {ret_game.token}')
     resp = models.ResponseMsg(token=ret_game.token, device=ret_game.device, cards=ret_game.playerCards, dealerCards=[],
                               handValue=gamelogic.score(ret_game.playerCards), dealerValue=0, status=ret_game.status)
     return Response(json.dumps(resp.__dict__, ensure_ascii=False), content_type="application/json; charset=utf-8")
@@ -86,8 +85,7 @@ def stay():
 @swag_from('swagger/stats.yml')
 def stats():
     device_id = utils.device_hash(request)
-    user_stats = stat_service.get_stat(device_id)
-    print(f'STATS: {device_id}')
+    user_stats = gamelogic.stats(device_id)
     if user_stats is None:
         return Response(json.dumps(models.ErrorMsg(status=400, message="Missing Device").__dict__),
                         content_type="application/json; charset=utf-8", status=400)
@@ -101,7 +99,6 @@ def stats():
 def history():
     device_id = utils.device_hash(request)
     start = request.args.get('start', '')
-    print(f'HISTORY: {device_id} {start}')
     games = game_service.get_history(device_id, start)
     resp = [models.ResponseMsg(x.token, x.device, x.playerCards, x.dealerCards,
                                gamelogic.score(x.playerCards), gamelogic.score(x.dealerCards), x.status).__dict__
@@ -119,7 +116,6 @@ def delete(token):
     if sure != 'true':
         return Response(json.dumps(models.ErrorMsg(status=400, message="Sure must be set to true").__dict__),
                         content_type="application/json; charset=utf-8", status=400)
-    print(f'DELETE HISTORY: {device_id if token is None else token}')
     resp = game_service.delete_history(device_id, token)
     return Response(json.dumps(resp, ensure_ascii=False), content_type="application/json; charset=utf-8")
 

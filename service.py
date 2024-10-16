@@ -1,6 +1,7 @@
 import models
 import repo
 import utils
+from decorators import log
 
 
 class ServiceGame:
@@ -21,10 +22,12 @@ class ServiceGame:
     def get_active_game(self, device: str, token: str) -> models.Game | None:
         return self.get_device(device) if token == "" else self.get_token(token)
 
+    @log('HISTORY')
     def get_history(self, device: str, start: str) -> list[models.Game]:
         epoch = utils.string_epoch(start)
         return self.__repo.get_history(device, epoch)
 
+    @log('DELETE HISTORY')
     def delete_history(self, device: str, token: str | None) -> bool:
         return self.__repo.delete_history(device, token)
 

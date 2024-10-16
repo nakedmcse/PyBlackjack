@@ -3,6 +3,7 @@ import re
 
 import models
 import service
+from decorators import log
 
 suits = ['\u2660', '\u2663', '\u2665', '\u2666']
 faces = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'J', 'Q', 'K']
@@ -20,6 +21,7 @@ def create_deck(game: models.Game):
         game.deck[i], game.deck[j] = game.deck[j], game.deck[i]
 
 
+@log('DEAL')
 def deal(game: models.Game):
     game.playerCards.append(game.deck.pop())
     game.dealerCards.append(game.deck.pop())
@@ -27,9 +29,9 @@ def deal(game: models.Game):
     game.dealerCards.append(game.deck.pop())
 
 
+@log('HIT')
 def hit(game: models.Game) -> models.ResponseMsg:
     game.playerCards.append(game.deck.pop())
-    print(f'HIT: {game.token}')
     if score(game.playerCards) > 21:
         game.status = "Bust"
         print('BUST')
@@ -41,11 +43,11 @@ def hit(game: models.Game) -> models.ResponseMsg:
     return resp
 
 
+@log('STAY')
 def stay(game: models.Game) -> models.ResponseMsg:
     while score(game.dealerCards) < 17:
         game.dealerCards.append(game.deck.pop())
 
-    print(f'STAY: {game.token}')
     playerScore = score(game.playerCards)
     dealerScore = score(game.dealerCards)
     if dealerScore > 21:
@@ -62,6 +64,11 @@ def stay(game: models.Game) -> models.ResponseMsg:
     resp = models.ResponseMsg(game.token, game.device, game.playerCards, game.dealerCards, score(game.playerCards), score(game.dealerCards), game.status)
     game_service.save_game(game)
     return resp
+
+
+@log('STATS')
+def stats(device_id: str) -> models.Stat | None:
+    return stat_service.get_stat(device_id)
 
 
 def score(cards: list[str]) -> int:
