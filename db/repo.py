@@ -1,5 +1,5 @@
-import dao
-import models
+import db.dao as dao
+import db.models as models
 
 
 class GameRepo:

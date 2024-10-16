@@ -1,8 +1,8 @@
 import random
 import re
 
-import models
 import service
+from db.models import Game, ResponseMsg, Stat
 from decorators import log
 
 suits = ['\u2660', '\u2663', '\u2665', '\u2666']
@@ -12,7 +12,7 @@ game_service = service.ServiceGame()
 stat_service = service.ServiceStat()
 
 
-def create_deck(game: models.Game):
+def create_deck(game: Game):
     for suit in suits:
         for face in faces:
             game.deck.append(face + suit)
@@ -22,7 +22,7 @@ def create_deck(game: models.Game):
 
 
 @log('DEAL')
-def deal(game: models.Game):
+def deal(game: Game):
     game.playerCards.append(game.deck.pop())
     game.dealerCards.append(game.deck.pop())
     game.playerCards.append(game.deck.pop())
@@ -30,13 +30,13 @@ def deal(game: models.Game):
 
 
 @log('HIT')
-def hit(game: models.Game) -> models.ResponseMsg:
+def hit(game: Game) -> ResponseMsg:
     game.playerCards.append(game.deck.pop())
     if score(game.playerCards) > 21:
         game.status = "Bust"
         print('BUST')
 
-    resp = models.ResponseMsg(game.token, game.device, game.playerCards, [], score(game.playerCards), 0, game.status)
+    resp = ResponseMsg(game.token, game.device, game.playerCards, [], score(game.playerCards), 0, game.status)
     if game.status == "Bust":
         stat_service.update_stat(game.device, "loss")
     game_service.save_game(game)
@@ -44,7 +44,7 @@ def hit(game: models.Game) -> models.ResponseMsg:
 
 
 @log('STAY')
-def stay(game: models.Game) -> models.ResponseMsg:
+def stay(game: Game) -> ResponseMsg:
     while score(game.dealerCards) < 17:
         game.dealerCards.append(game.deck.pop())
 
@@ -61,13 +61,13 @@ def stay(game: models.Game) -> models.ResponseMsg:
         print(game.status.upper())
         stat_service.update_stat(game.device, gameState)
 
-    resp = models.ResponseMsg(game.token, game.device, game.playerCards, game.dealerCards, score(game.playerCards), score(game.dealerCards), game.status)
+    resp = ResponseMsg(game.token, game.device, game.playerCards, game.dealerCards, score(game.playerCards), score(game.dealerCards), game.status)
     game_service.save_game(game)
     return resp
 
 
 @log('STATS')
-def stats(device_id: str) -> models.Stat | None:
+def stats(device_id: str) -> Stat | None:
     return stat_service.get_stat(device_id)
 
 
