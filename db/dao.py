@@ -10,19 +10,22 @@ BaseModel.metadata.create_all(bind=engine)
 
 # Game Dao
 class GameDao:
-    def save_entry(self, entry: Game):
+    @staticmethod
+    def save_entry(entry: Game):
         global engine
         with Session(engine) as session:
             session.merge(entry)
             session.commit()
 
-    def delete_entry(self, entry: Game):
+    @staticmethod
+    def delete_entry(entry: Game):
         global engine
         with Session(engine) as session:
             session.delete(entry)
             session.commit()
 
-    def get_entry_by_token(self, token: str) -> Game | None:
+    @staticmethod
+    def get_entry_by_token(token: str) -> Game | None:
         global engine
         retval = None
         with Session(engine) as session:
@@ -30,7 +33,8 @@ class GameDao:
             retval = session.scalars(stmt).first()
         return retval
 
-    def get_entry_by_device(self, device: str) -> Game | None:
+    @staticmethod
+    def get_entry_by_device(device: str) -> Game | None:
         global engine
         retval = None
         with Session(engine) as session:
@@ -38,7 +42,8 @@ class GameDao:
             retval = session.scalars(stmt).first()
         return retval
 
-    def get_history(self, device: str, epoch: int) -> list[Game]:
+    @staticmethod
+    def get_history(device: str, epoch: int) -> list[Game]:
         global engine
         retval = None
         with Session(engine) as session:
@@ -46,7 +51,8 @@ class GameDao:
             retval = list(session.scalars(stmt))
         return retval
 
-    def delete_history(self, device: str, token: str | None) -> bool:
+    @staticmethod
+    def delete_history(device: str, token: str | None) -> bool:
         global engine
         with Session(engine) as session:
             if token is None:
@@ -60,14 +66,16 @@ class GameDao:
 
 # Stat Dao
 class StatDao:
-    def save_entry(self, entry: Stat):
+    @staticmethod
+    def save_entry(entry: Stat):
         global engine
         with Session(engine) as session:
             session.add(entry)
             session.commit()
             session.refresh(entry)
 
-    def get_entry(self, device: str) -> Stat | None:
+    @staticmethod
+    def get_entry(device: str) -> Stat | None:
         global engine
         retval = None
         with Session(engine) as session:
