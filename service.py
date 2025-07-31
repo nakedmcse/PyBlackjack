@@ -1,7 +1,6 @@
 import db.repo as repo
 import utils
 from db.models import Game, Stat
-from decorators import log
 
 
 class ServiceGame:

@@ -3,7 +3,6 @@ import re
 
 import service
 from db.models import Game, ResponseMsg, Stat
-from decorators import log
 
 suits = ['\u2660', '\u2663', '\u2665', '\u2666']
 faces = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'J', 'Q', 'K']

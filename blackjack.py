@@ -1,4 +1,3 @@
-import json
 import os
 import time
 import uuid
@@ -25,6 +24,7 @@ blackjack_api = FastAPI()
 @blackjack_api.post('/deal')
 def deal(request: Request):
     device_id = utils.device_hash(request)
+    utils.log('DEAL', device_id)
     ret_game = game_service.get_device(device_id)
 
     if ret_game is None:
@@ -44,6 +44,7 @@ def deal(request: Request):
 @blackjack_api.post('/hit/{token}')
 def hit(request: Request, token: Optional[str] = ''):
     device_id = utils.device_hash(request)
+    utils.log('HIT', device_id, token)
     ret_game = game_service.get_active_game(token=token, device=device_id)
     if ret_game is None:
         return JSONResponse(status_code = 400, content = ErrorMsg(status=400, message="Missing Game").__dict__)
@@ -55,6 +56,7 @@ def hit(request: Request, token: Optional[str] = ''):
 @blackjack_api.post('/stay/{token}')
 def stay(request: Request, token: Optional[str] = ''):
     device_id = utils.device_hash(request)
+    utils.log('STAY', device_id, token)
     ret_game = game_service.get_active_game(token=token, device=device_id)
     if ret_game is None:
         return JSONResponse(status_code = 400, content=ErrorMsg(status=400, message="Missing Game").__dict__)
@@ -65,6 +67,7 @@ def stay(request: Request, token: Optional[str] = ''):
 @blackjack_api.get('/stats')
 def stats(request: Request):
     device_id = utils.device_hash(request)
+    utils.log('STATS', device_id)
     user_stats = gamelogic.stats(device_id)
     if user_stats is None:
         return JSONResponse(status_code = 400, content = ErrorMsg(status=400, message="Missing Device").__dict__)
@@ -75,6 +78,7 @@ def stats(request: Request):
 @blackjack_api.get('/history')
 def history(request: Request, start: str = Query('')):
     device_id = utils.device_hash(request)
+    utils.log('HISTORY', device_id, '', start)
     games = game_service.get_history(device_id, start)
     resp = [ResponseMsg(x.token, x.device, x.playerCards, x.dealerCards,
                         gamelogic.score(x.playerCards), gamelogic.score(x.dealerCards), x.status)
@@ -89,8 +93,12 @@ def delete(request: Request, token: Optional[str] = '', sure: str = Query(None))
     device_id = utils.device_hash(request)
     if sure != 'true':
         return JSONResponse(status_code = 400, content = ErrorMsg(status=400, message="Sure must be set to true").__dict__)
+    utils.log('DELETE', device_id, token)
     return game_service.delete_history(device_id, token)
 
 
 if __name__ == '__main__':
-    uvicorn.run("blackjack:blackjack_api", port=int(os.getenv('PORT')))
+    if os.getenv('ENV').upper() == 'DEV':
+        uvicorn.run("blackjack:blackjack_api", port=int(os.getenv('PORT')), log_level="trace")
+    else:
+        uvicorn.run("blackjack:blackjack_api", port=int(os.getenv('PORT')))

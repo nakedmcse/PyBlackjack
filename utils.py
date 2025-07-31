@@ -8,6 +8,9 @@ def device_hash(req: Request) -> str:
     ua = req.headers.get('User-Agent', '')
     return hashlib.sha256(f'{ip}{ua}'.encode()).hexdigest()
 
+def log(action: str, device_id: str, token: str = '', start: str = ''):
+    print(f'{action}: {device_id if token is '' else token} {start}')
+    return
 
 def string_epoch(date_str: str) -> int:
     try:
