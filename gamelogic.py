@@ -21,7 +21,6 @@ def create_deck(game: Game):
         game.deck[i], game.deck[j] = game.deck[j], game.deck[i]
 
 
-@log('DEAL')
 def deal(game: Game):
     game.playerCards.append(game.deck.pop())
     game.dealerCards.append(game.deck.pop())
@@ -29,7 +28,6 @@ def deal(game: Game):
     game.dealerCards.append(game.deck.pop())
 
 
-@log('HIT')
 def hit(game: Game) -> ResponseMsg:
     game.playerCards.append(game.deck.pop())
     if score(game.playerCards) > 21:
@@ -43,7 +41,6 @@ def hit(game: Game) -> ResponseMsg:
     return resp
 
 
-@log('STAY')
 def stay(game: Game) -> ResponseMsg:
     while score(game.dealerCards) < 17:
         game.dealerCards.append(game.deck.pop())
@@ -66,7 +63,6 @@ def stay(game: Game) -> ResponseMsg:
     return resp
 
 
-@log('STATS')
 def stats(device_id: str) -> Stat | None:
     return stat_service.get_stat(device_id)
 

@@ -1,15 +1,14 @@
 # Decorators
-from flask import request
-
+from fastapi import Request
 import utils
 
 
-def log(action):
+def log(action, request: Request):
     def decorator_f(func):
         def wrapper_f(*args, **kwargs):
-            token = request.args.get('token')
+            token = request.path_params.get('token')
             device_id = utils.device_hash(request)
-            start = request.args.get('start', '')
+            start = request.path_params.get('start', '')
             retval = func(*args, **kwargs)
             print(f'{action}: {device_id if token is None else token} {start}')
             return retval
