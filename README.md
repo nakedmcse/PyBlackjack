@@ -5,14 +5,13 @@
 This contains the Python version of the BlackJack game API.
 
 ## Installation
-This application depends upon DotEnv, Flasgger, Flask, Waitress and SQLAlchemy.
+This application depends upon DotEnv, FastApi, Uvicorn and SQLAlchemy.
 
 ```shell
 pip install SQLAlchemy
-pip install flask
+pip install fastapi
 pip install python-dotenv
-pip install flasgger
-pip install waitress
+pip install uvicorn
 ```
 
 After that you can run blackjack.py
@@ -23,15 +22,21 @@ The `.env` file must be created for this application to run.  Rename `.envExampl
 ### Env File Settings
 Edit the `.env` file to set the following:
 
-| Setting | Description                                          |
-|---------|------------------------------------------------------|
-| PORT    | The port the service will listen on                  |
-| DEBUG   | `true` to run flask in debug mode, `false` otherwise |
-| ENV     | `dev` to run as flask, `prod` to run in waitress     |
+| Setting | Description                                            |
+|---------|--------------------------------------------------------|
+| PORT    | The port the service will listen on                    |
+| ENV     | `dev` to run uvicorn with trace, `prod` to run uvicorn |
+
+## Swagger
+The swagger documentation can be accessed using the following URL:
+
+```
+http://127.0.0.1:5000/docs
+```
 
 ## Usage
 
-This API contains 5 interactions.
+This API contains 6 interactions.
 
 1. [Deal](#deal)
 2. [Hit](#hit)
@@ -51,7 +56,7 @@ The returned data contains the players cards and the token to play the game.
 > **NOTE:** The device ID is a hash of the user agent and the client IP
 
 ```shell
-curl -X 'POST' 'http://localhost:5000/deal'
+curl -X 'POST' 'http://127.0.0.1:5000/deal'
 ```
 ```json
 {
@@ -72,9 +77,9 @@ If the token is not specified then the device ID will be used instead to find th
 The returned data contains the players cards and the token to play the game.
 
 ```shell
-curl -X 'POST' 'http://localhost:5000/hit?token=game-token-goes-here'
+curl -X 'POST' 'http://127.0.0.1:5000/hit?token=game-token-goes-here'
 
-curl -X 'POST' 'http://localhost:5000/hit'
+curl -X 'POST' 'http://127.0.0.1:5000/hit'
 ```
 ```json
 {
@@ -97,9 +102,9 @@ The returned data contains the players and the dealers cards, their relative val
 However the game is over at this point and an new /deal call must be made to start a new game.
 
 ```shell
-curl -X 'POST' 'http://localhost:5000/stay?token=game-token-goes-here'
+curl -X 'POST' 'http://127.0.0.1:5000/stay?token=game-token-goes-here'
 
-curl -X 'POST' 'http://localhost:5000/stay'
+curl -X 'POST' 'http://127.0.0.1:5000/stay'
 ```
 ```json
 {
@@ -117,7 +122,7 @@ curl -X 'POST' 'http://localhost:5000/stay'
 This endpoint takes no parameters and will return the win, loss and draw count for the device making the call.
 
 ```shell
-curl 'http://localhost:5000/stats'
+curl 'http://127.0.0.1:5000/stats'
 ```
 ```json
 {
@@ -131,9 +136,9 @@ curl 'http://localhost:5000/stats'
 This endpoint optionally takes the start date as a parameter and will return the game history for the device making the call, after the start date if specified, as an array of responses.
 
 ```shell
-curl 'http://localhost:5000/history?start=2024-10-03'
+curl 'http://127.0.0.1:5000/history?start=2024-10-03'
 
-curl 'http://localhost:5000/history'
+curl 'http://127.0.0.1:5000/history'
 ```
 
 ```json
@@ -151,9 +156,9 @@ It can also take an option path component with the game token.  If token is spec
 > **NOTE:** If sure is not set to true, the history will not be deleted
 
 ```shell
-curl -X 'DELETE' 'http://localhost:5000/delete?sure=true'
+curl -X 'DELETE' 'http://127.0.0.1:5000/delete?sure=true'
 
-curl -X 'DELETE' 'http://localhost:5000/delete/420b767b-9506-47cc-a1e8-ed11d513fd30?sure=true'
+curl -X 'DELETE' 'http://127.0.0.1:5000/delete/420b767b-9506-47cc-a1e8-ed11d513fd30?sure=true'
 ```
 
 ```json
